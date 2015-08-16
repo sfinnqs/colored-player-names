@@ -1,3 +1,6 @@
 name: ColoredPlayerNames
-version: 0.3
+version: 0.4
+description: A very simple plugin that colors players' names randomly on join
+author: fvoichick
+website: http://dev.bukkit.org/bukkit-plugins/coloredplayernames/
 main: com.finnv3.coloredplayernames.ColoredPlayerNames

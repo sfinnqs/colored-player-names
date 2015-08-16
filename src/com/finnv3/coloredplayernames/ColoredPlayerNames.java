@@ -64,7 +64,18 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 	public void onPlayerJoin(PlayerJoinEvent event) {
 
 		Player player = event.getPlayer();
+		ChatColor color = getPermColor(player);
+		if (color == null) {
+			color = pickColor(player);
+		}
+		colorPlayer(player, color);
+		
 
+		event.setJoinMessage(player.getDisplayName() + ChatColor.YELLOW + " joined the game.");
+
+	}
+	
+	private ChatColor pickColor(Player player) {
 		List<ChatColor> availableColors = new ArrayList<ChatColor>(16);
 		Map<ChatColor, Integer> colorsInUse = new EnumMap<ChatColor, Integer>(ChatColor.class);
 		for (ChatColor color : colors) {
@@ -85,9 +96,10 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 			}
 		}
 
-		getLogger().log(Level.INFO, "Available Colors: {0}", availableColors);
-
-		ChatColor color = availableColors.get(random.nextInt(availableColors.size()));
+		return availableColors.get(random.nextInt(availableColors.size()));
+	}
+	
+	private void colorPlayer(Player player, ChatColor color) {
 		playerColors.put(player.getUniqueId(), color);
 
 		player.setDisplayName(color + player.getPlayerListName() + ChatColor.RESET);
@@ -98,9 +110,16 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 		team.setSuffix(ChatColor.RESET.toString());
 		team.addEntry(player.getName());
 		player.setScoreboard(scoreboard);
-
-		event.setJoinMessage(player.getDisplayName() + ChatColor.YELLOW + " joined the game.");
-
+	}
+	
+	private ChatColor getPermColor(Player player) {
+		for (int i = 0; i < colors.length; i++) {
+			ChatColor color = colors[i];
+			if (player.hasPermission("coloredplayernames." + color)) {
+				return color;
+			}
+		}
+		return null;
 	}
 
 	@EventHandler
