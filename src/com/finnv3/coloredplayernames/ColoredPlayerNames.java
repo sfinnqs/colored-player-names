@@ -1,8 +1,4 @@
 package com.finnv3.coloredplayernames;
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,8 +25,9 @@ import org.mcstats.MetricsLite;
 import net.gravitydevelopment.updater.Updater;
 
 /**
+ * The main (and only) ColoredPlayerNames class
  *
- * @author Finn
+ * @author Finn Voichick
  */
 public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 
@@ -41,7 +38,7 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 
 	@Override
 	public void onEnable() {
-		
+
 		saveDefaultConfig();
 		if (getConfig().getBoolean("auto-update")) {
 			new Updater(this, id, getFile(), Updater.UpdateType.DEFAULT, false);
@@ -123,7 +120,7 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 		scoreboard.getTeam(event.getPlayer().getName()).unregister();
 
 	}
-	
+
 	private static final int id = 80947;
 
 	private static final ChatColor[] colors = { ChatColor.BLACK, ChatColor.DARK_BLUE, ChatColor.DARK_GREEN,
