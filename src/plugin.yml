@@ -4,3 +4,52 @@ description: A very simple plugin that colors players' names randomly on join
 author: fvoichick
 website: http://dev.bukkit.org/bukkit-plugins/coloredplayernames/
 main: com.finnv3.coloredplayernames.ColoredPlayerNames
+permissions:
+  coloredplayernames.BLACK:
+    description: Sets a player's name to permanently be colored black
+    default: false
+  coloredplayernames.DARK_BLUE:
+    description: Sets a player's name to permanently be colored dark blue
+    default: false
+  coloredplayernames.DARK_GREEN:
+    description: Sets a player's name to permanently be colored dark green
+    default: false
+  coloredplayernames.DARK_AQUA:
+    description: Sets a player's name to permanently be colored dark aqua
+    default: false
+  coloredplayernames.DARK_RED:
+    description: Sets a player's name to permanently be colored dark red
+    default: false
+  coloredplayernames.DARK_PURPLE:
+    description: Sets a player's name to permanently be colored dark purple
+    default: false
+  coloredplayernames.GOLD:
+    description: Sets a player's name to permanently be colored gold
+    default: false
+  coloredplayernames.GRAY:
+    description: Sets a player's name to permanently be colored gray
+    default: false
+  coloredplayernames.DARK_GRAY:
+    description: Sets a player's name to permanently be colored dark gray
+    default: false
+  coloredplayernames.BLUE:
+    description: Sets a player's name to permanently be colored blue
+    default: false
+  coloredplayernames.GREEN:
+    description: Sets a player's name to permanently be colored green
+    default: false
+  coloredplayernames.AQUA:
+    description: Sets a player's name to permanently be colored aqua
+    default: false
+  coloredplayernames.RED:
+    description: Sets a player's name to permanently be colored red
+    default: false
+  coloredplayernames.LIGHT_PURPLE:
+    description: Sets a player's name to permanently be colored light purple
+    default: false
+  coloredplayernames.YELLOW:
+    description: Sets a player's name to permanently be colored yellow
+    default: false
+  coloredplayernames.WHITE:
+    description: Sets a player's name to permanently be colored white
+    default: false    

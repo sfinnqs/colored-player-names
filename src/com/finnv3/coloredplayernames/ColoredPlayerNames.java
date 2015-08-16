@@ -69,12 +69,11 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 			color = pickColor(player);
 		}
 		colorPlayer(player, color);
-		
 
 		event.setJoinMessage(player.getDisplayName() + ChatColor.YELLOW + " joined the game.");
 
 	}
-	
+
 	private ChatColor pickColor(Player player) {
 		List<ChatColor> availableColors = new ArrayList<ChatColor>(16);
 		Map<ChatColor, Integer> colorsInUse = new EnumMap<ChatColor, Integer>(ChatColor.class);
@@ -98,7 +97,7 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 
 		return availableColors.get(random.nextInt(availableColors.size()));
 	}
-	
+
 	private void colorPlayer(Player player, ChatColor color) {
 		playerColors.put(player.getUniqueId(), color);
 
@@ -111,11 +110,11 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 		team.addEntry(player.getName());
 		player.setScoreboard(scoreboard);
 	}
-	
+
 	private ChatColor getPermColor(Player player) {
 		for (int i = 0; i < colors.length; i++) {
 			ChatColor color = colors[i];
-			if (player.hasPermission("coloredplayernames." + color)) {
+			if (player.hasPermission("coloredplayernames." + color.name())) {
 				return color;
 			}
 		}
