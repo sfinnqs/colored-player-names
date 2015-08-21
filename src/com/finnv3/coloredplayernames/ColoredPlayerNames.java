@@ -6,7 +6,6 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Random;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -70,24 +69,23 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 		
 		
 		for (Player player : getServer().getOnlinePlayers()) {
-			ChatColor color = getPermColor(player);
-			if (color == null) {
-				color = pickColor(player);
-			}
-			colorPlayer(player, color);
+			colorPlayer(player);
 		}
 
+	}
+	
+	@Override
+	public void onDisable() {
+		for (Player player : getServer().getOnlinePlayers()) {
+			uncolorPlayer(player);
+		}
 	}
 
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
 
 		Player player = event.getPlayer();
-		ChatColor color = getPermColor(player);
-		if (color == null) {
-			color = pickColor(player);
-		}
-		colorPlayer(player, color);
+		colorPlayer(player);
 
 		event.setJoinMessage(player.getDisplayName() + ChatColor.YELLOW + " joined the game.");
 
@@ -116,11 +114,19 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 
 		return availableColors.get(random.nextInt(availableColors.size()));
 	}
+	
+	private void colorPlayer(Player player) {
+		ChatColor color = getPermColor(player);
+		if (color == null) {
+			color = pickColor(player);
+		}
+		colorPlayer(player, color);
+	}
 
 	private void colorPlayer(Player player, ChatColor color) {
 		playerColors.put(player.getUniqueId(), color);
 
-		player.setDisplayName(color + player.getPlayerListName() + ChatColor.RESET);
+		player.setDisplayName(color + player.getName() + ChatColor.RESET);
 
 		Team team = scoreboard.registerNewTeam(player.getName());
 		team.setDisplayName(player.getName());
@@ -128,6 +134,11 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 		team.setSuffix(ChatColor.RESET.toString());
 		team.addEntry(player.getName());
 		player.setScoreboard(scoreboard);
+	}
+	
+	private void uncolorPlayer(Player player) {
+		scoreboard.getTeam(player.getName()).unregister();
+		player.setDisplayName(player.getName());
 	}
 
 	private ChatColor getPermColor(Player player) {
@@ -153,7 +164,7 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 	public void onPlayerQuit(PlayerQuitEvent event) {
 
 		event.setQuitMessage(event.getPlayer().getDisplayName() + ChatColor.YELLOW + " left the game.");
-		scoreboard.getTeam(event.getPlayer().getName()).unregister();
+		uncolorPlayer(event.getPlayer());
 
 	}
 
