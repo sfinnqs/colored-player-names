@@ -6,11 +6,13 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.UUID;
 import java.util.logging.Level;
 
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -32,6 +34,7 @@ import net.gravitydevelopment.updater.Updater;
 public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 
 	private Scoreboard scoreboard;
+	private Map<ChatColor, Double> weights;
 	private Map<UUID, ChatColor> playerColors;
 
 	private Random random;
@@ -52,11 +55,27 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 
 		scoreboard = getServer().getScoreboardManager().getNewScoreboard();
 
+		weights = new HashMap<ChatColor, Double>();
+		ConfigurationSection colorSection = getConfig().getConfigurationSection("colors");
+		for (String colorName : colorSection.getKeys(false)) {
+			ConfigurationSection singleColor = colorSection.getConfigurationSection(colorName);
+			weights.put(ChatColor.getByChar(singleColor.getString("code")), singleColor.getDouble("weight"));
+		}
+		
 		playerColors = new HashMap<UUID, ChatColor>(16);
 
 		random = new Random();
 
 		getServer().getPluginManager().registerEvents(this, this);
+		
+		
+		for (Player player : getServer().getOnlinePlayers()) {
+			ChatColor color = getPermColor(player);
+			if (color == null) {
+				color = pickColor(player);
+			}
+			colorPlayer(player, color);
+		}
 
 	}
 
@@ -77,14 +96,14 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 	private ChatColor pickColor(Player player) {
 		List<ChatColor> availableColors = new ArrayList<ChatColor>(16);
 		Map<ChatColor, Integer> colorsInUse = new EnumMap<ChatColor, Integer>(ChatColor.class);
-		for (ChatColor color : colors) {
+		for (ChatColor color : weights.keySet()) {
 			colorsInUse.put(color, 0);
 		}
 		for (ChatColor color : playerColors.values()) {
 			colorsInUse.put(color, colorsInUse.get(color) + 1);
 		}
 		int lowestNumber = Integer.MAX_VALUE;
-		for (ChatColor color : colors) {
+		for (ChatColor color : weights.keySet()) {
 			int occurences = colorsInUse.get(color);
 			if (occurences <= lowestNumber) {
 				if (occurences < lowestNumber) {
@@ -112,8 +131,7 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 	}
 
 	private ChatColor getPermColor(Player player) {
-		for (int i = 0; i < colors.length; i++) {
-			ChatColor color = colors[i];
+		for (ChatColor color : weights.keySet()) {
 			if (player.hasPermission("coloredplayernames." + color.name())) {
 				return color;
 			}
@@ -140,10 +158,5 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 	}
 
 	private static final int id = 80947;
-
-	private static final ChatColor[] colors = { ChatColor.BLACK, ChatColor.DARK_BLUE, ChatColor.DARK_GREEN,
-			ChatColor.DARK_AQUA, ChatColor.DARK_RED, ChatColor.DARK_PURPLE, ChatColor.GOLD, ChatColor.GRAY,
-			ChatColor.DARK_GRAY, ChatColor.BLUE, ChatColor.GREEN, ChatColor.AQUA, ChatColor.RED, ChatColor.LIGHT_PURPLE,
-			ChatColor.YELLOW, ChatColor.WHITE };
 
 }

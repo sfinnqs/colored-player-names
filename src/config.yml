@@ -1,1 +1,67 @@
 auto-update: true
+allow-multiple-formats: false
+colors:
+  black:
+    code: 0
+    weight: 1.0
+  dark_blue:
+    code: 1
+    weight: 1.0
+  dark_green:
+    code: 2
+    weight: 1.0
+  dark_aqua:
+    code: 3
+    weight: 1.0
+  dark_red:
+    code: 4
+    weight: 1.0
+  dark_purple:
+    code: 5
+    weight: 1.0
+  gold:
+    code: 6
+    weight: 1.0
+  gray:
+    code: 7
+    weight: 1.0
+  dark_gray:
+    code: 8
+    weight: 1.0
+  blue:
+    code: 9
+    weight: 1.0
+  green:
+    code: a
+    weight: 1.0
+  aqua:
+    code: b
+    weight: 1.0
+  red:
+    code: c
+    weight: 1.0
+  light_purple:
+    code: d
+    weight: 1.0
+  yellow:
+    code: e
+    weight: 1.0
+  white:
+    code: f
+    weight: 1.0
+format:
+  obfuscated:
+    code: k
+    percent: 0
+  bold:
+    code: l
+    percent: 0
+  strikethrough:
+    code: m
+    percent: 0
+  underline:
+    code: n
+    percent: 0
+  italic:
+    code: o
+    percent: 0
