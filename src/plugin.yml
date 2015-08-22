@@ -5,51 +5,46 @@ author: fvoichick
 website: http://dev.bukkit.org/bukkit-plugins/coloredplayernames/
 main: com.finnv3.coloredplayernames.ColoredPlayerNames
 permissions:
-  coloredplayernames.BLACK:
+  coloredplayernames.black:
     description: Sets a player's name to permanently be colored black
-    default: false
-  coloredplayernames.DARK_BLUE:
+  coloredplayernames.dark_blue:
     description: Sets a player's name to permanently be colored dark blue
-    default: false
-  coloredplayernames.DARK_GREEN:
+  coloredplayernames.dark_green:
     description: Sets a player's name to permanently be colored dark green
-    default: false
-  coloredplayernames.DARK_AQUA:
+  coloredplayernames.dark_aqua:
     description: Sets a player's name to permanently be colored dark aqua
-    default: false
-  coloredplayernames.DARK_RED:
+  coloredplayernames.dark_red:
     description: Sets a player's name to permanently be colored dark red
-    default: false
-  coloredplayernames.DARK_PURPLE:
+  coloredplayernames.dark_purple:
     description: Sets a player's name to permanently be colored dark purple
-    default: false
-  coloredplayernames.GOLD:
+  coloredplayernames.gold:
     description: Sets a player's name to permanently be colored gold
-    default: false
-  coloredplayernames.GRAY:
+  coloredplayernames.gray:
     description: Sets a player's name to permanently be colored gray
-    default: false
-  coloredplayernames.DARK_GRAY:
+  coloredplayernames.dark_gray:
     description: Sets a player's name to permanently be colored dark gray
-    default: false
-  coloredplayernames.BLUE:
+  coloredplayernames.blue:
     description: Sets a player's name to permanently be colored blue
-    default: false
-  coloredplayernames.GREEN:
+  coloredplayernames.green:
     description: Sets a player's name to permanently be colored green
-    default: false
-  coloredplayernames.AQUA:
+  coloredplayernames.aqua:
     description: Sets a player's name to permanently be colored aqua
-    default: false
-  coloredplayernames.RED:
+  coloredplayernames.red:
     description: Sets a player's name to permanently be colored red
-    default: false
-  coloredplayernames.LIGHT_PURPLE:
+  coloredplayernames.light_purple:
     description: Sets a player's name to permanently be colored light purple
-    default: false
-  coloredplayernames.YELLOW:
+  coloredplayernames.yellow:
     description: Sets a player's name to permanently be colored yellow
-    default: false
-  coloredplayernames.WHITE:
+  coloredplayernames.white:
     description: Sets a player's name to permanently be colored white
-    default: false    
+  coloredplayernames.obfuscated:
+    description: Sets a player's name to permanently be obfuscated
+  coloredplayernames.bold:
+    description: Sets a player's name to permanently be bold
+  coloredplayernames.strikethrough:
+    description: Sets a player's name to permanently be crossed out
+  coloredplayernames.underline:
+    description: Sets a player's name to permanently be underlined
+  coloredplayernames.italic:
+    description: Sets a player's name to permanently be italicized
+    
