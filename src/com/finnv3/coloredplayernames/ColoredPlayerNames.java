@@ -1,11 +1,10 @@
 package com.finnv3.coloredplayernames;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -37,7 +36,7 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 	private Scoreboard scoreboard;
 	private Map<UUID, ChatColor> playerColors;
 
-	private Random random;
+	private static Random random;
 
 	@Override
 	public void onEnable() {
@@ -86,7 +85,7 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 	}
 
 	private ChatColor pickColor(Player player) {
-		List<ChatColor> availableColors = new ArrayList<ChatColor>(16);
+		Set<ChatColor> availableColors = EnumSet.noneOf(ChatColor.class);
 		Map<ChatColor, Integer> colorsInUse = new EnumMap<ChatColor, Integer>(ChatColor.class);
 		Set<ChatColor> possibleColors = possibleColors();
 		for (ChatColor color : possibleColors) {
@@ -115,7 +114,7 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 			weightTotal += weight(color);
 		}
 		if (weightTotal <= 0.0) {
-			return availableColors.get(random.nextInt(availableColors.size()));
+			return elementFrom(availableColors);
 		}
 		double randomNumber = random.nextDouble();
 		double probability = 0.0;
@@ -125,7 +124,7 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 				return color;
 			}
 		}
-		return availableColors.get(random.nextInt(availableColors.size()));
+		return elementFrom(availableColors);
 	}
 	
 	private void colorPlayer(Player player) {
@@ -155,9 +154,10 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 	}
 
 	private ChatColor getPermColor(Player player) {
-		for (ChatColor color : possibleColors()) {
-			if (player.hasPermission("coloredplayernames." + color.name()) || player.hasPermission("coloredplayernames.obfuscated") && color.equals(ChatColor.MAGIC)) {
-				return color;
+		ConfigurationSection colorSection = getConfig().getConfigurationSection("colors");
+		for (String colorName : colorSection.getKeys(false)) {
+			if (player.hasPermission("coloredplayernames." + colorName)) {
+				return ChatColor.getByChar(colorSection.getString(colorName + ".code"));
 			}
 		}
 		return null;
@@ -200,6 +200,20 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 		event.setQuitMessage(event.getPlayer().getDisplayName() + ChatColor.YELLOW + " left the game.");
 		uncolorPlayer(event.getPlayer());
 
+	}
+	
+	private static final <E> E elementFrom(Collection<E> collection) {
+		int index = random.nextInt(collection.size());
+		
+		int i = 0;
+		for (E element : collection) {
+			if (index == i) {
+				return element;
+			}
+			i++;
+		}
+		
+		throw new AssertionError();
 	}
 
 	private static final int id = 80947;
