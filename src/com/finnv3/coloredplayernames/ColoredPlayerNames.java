@@ -3,10 +3,12 @@ package com.finnv3.coloredplayernames;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 
@@ -33,7 +35,6 @@ import net.gravitydevelopment.updater.Updater;
 public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 
 	private Scoreboard scoreboard;
-	private Map<ChatColor, Double> weights;
 	private Map<UUID, ChatColor> playerColors;
 
 	private Random random;
@@ -53,13 +54,6 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 		}
 
 		scoreboard = getServer().getScoreboardManager().getNewScoreboard();
-
-		weights = new HashMap<ChatColor, Double>();
-		ConfigurationSection colorSection = getConfig().getConfigurationSection("colors");
-		for (String colorName : colorSection.getKeys(false)) {
-			ConfigurationSection singleColor = colorSection.getConfigurationSection(colorName);
-			weights.put(ChatColor.getByChar(singleColor.getString("code")), singleColor.getDouble("weight"));
-		}
 		
 		playerColors = new HashMap<UUID, ChatColor>(16);
 
@@ -94,14 +88,15 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 	private ChatColor pickColor(Player player) {
 		List<ChatColor> availableColors = new ArrayList<ChatColor>(16);
 		Map<ChatColor, Integer> colorsInUse = new EnumMap<ChatColor, Integer>(ChatColor.class);
-		for (ChatColor color : weights.keySet()) {
+		Set<ChatColor> possibleColors = possibleColors();
+		for (ChatColor color : possibleColors) {
 			colorsInUse.put(color, 0);
 		}
 		for (ChatColor color : playerColors.values()) {
 			colorsInUse.put(color, colorsInUse.get(color) + 1);
 		}
 		int lowestNumber = Integer.MAX_VALUE;
-		for (ChatColor color : weights.keySet()) {
+		for (ChatColor color : possibleColors) {
 			int occurences = colorsInUse.get(color);
 			if (occurences <= lowestNumber) {
 				if (occurences < lowestNumber) {
@@ -117,12 +112,12 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 		
 		double weightTotal = 0.0;
 		for (ChatColor color : availableColors) {
-			weightTotal += weights.get(color);
+			weightTotal += weight(color);
 		}
 		double randomNumber = random.nextDouble();
 		double probability = 0.0;
 		for (ChatColor color : availableColors) {
-			probability += weights.get(color) / weightTotal;
+			probability += weight(color) / weightTotal;
 			if (randomNumber < probability) {
 				return color;
 			}
@@ -157,12 +152,33 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 	}
 
 	private ChatColor getPermColor(Player player) {
-		for (ChatColor color : weights.keySet()) {
-			if (player.hasPermission("coloredplayernames." + color.name())) {
+		for (ChatColor color : possibleColors()) {
+			if (player.hasPermission("coloredplayernames." + color.name()) || player.hasPermission("coloredplayernames.obfuscated") && color.equals(ChatColor.MAGIC)) {
 				return color;
 			}
 		}
 		return null;
+	}
+	
+	private Set<ChatColor> possibleColors() {
+		Set<ChatColor> result = EnumSet.noneOf(ChatColor.class);
+		ConfigurationSection colorSection = getConfig().getConfigurationSection("colors");
+		for (String colorName : colorSection.getKeys(false)) {
+			ConfigurationSection singleColor = colorSection.getConfigurationSection(colorName);
+			result.add(ChatColor.getByChar(singleColor.getString("code")));
+		}
+		return result;
+	}
+	
+	private double weight(ChatColor color) {
+		ConfigurationSection colorSection = getConfig().getConfigurationSection("colors");
+		for (String colorName : colorSection.getKeys(false)) {
+			ConfigurationSection singleColor = colorSection.getConfigurationSection(colorName);
+			if (singleColor.getString("code").equals(color.getChar())) {
+				return singleColor.getDouble("weight");
+			}
+		}
+		return 0.0;
 	}
 
 	@EventHandler
