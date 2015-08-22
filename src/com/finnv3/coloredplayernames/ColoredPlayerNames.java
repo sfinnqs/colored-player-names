@@ -111,8 +111,20 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 				availableColors.add(color);
 			}
 		}
-
-		return availableColors.get(random.nextInt(availableColors.size()));
+		
+		double weightTotal = 0.0;
+		for (ChatColor color : availableColors) {
+			weightTotal += weights.get(color);
+		}
+		double randomNumber = random.nextDouble();
+		double probability = 0.0;
+		for (ChatColor color : availableColors) {
+			probability += weights.get(color) / weightTotal;
+			if (randomNumber < probability) {
+				return color;
+			}
+		}
+		throw new AssertionError();
 	}
 	
 	private void colorPlayer(Player player) {
