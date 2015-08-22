@@ -111,6 +111,9 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 				availableColors.add(color);
 			}
 		}
+		if (availableColors.isEmpty()) {
+			return ChatColor.RESET;
+		}
 		
 		double weightTotal = 0.0;
 		for (ChatColor color : availableColors) {
@@ -124,7 +127,7 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 				return color;
 			}
 		}
-		throw new AssertionError();
+		return availableColors.get(random.nextInt(availableColors.size()));
 	}
 	
 	private void colorPlayer(Player player) {
