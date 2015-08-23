@@ -160,9 +160,7 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 	private ChatColor getPermColor(Player player) {
 		ConfigurationSection colorSection = getConfig().getConfigurationSection("colors");
 		for (String colorName : colorSection.getKeys(false)) {
-			getLogger().info("color " + colorName);
 			if (player.hasPermission("coloredplayernames." + colorName)) {
-				getLogger().info("player has");
 				return ChatColor.getByChar(colorSection.getString(colorName + ".code"));
 			}
 		}
@@ -183,7 +181,7 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 		ConfigurationSection colorSection = getConfig().getConfigurationSection("colors");
 		for (String colorName : colorSection.getKeys(false)) {
 			ConfigurationSection singleColor = colorSection.getConfigurationSection(colorName);
-			if (singleColor.getString("code").equals(color.getChar())) {
+			if (singleColor.getString("code").equals(String.valueOf(color.getChar()))) {
 				return singleColor.getDouble("weight");
 			}
 		}
