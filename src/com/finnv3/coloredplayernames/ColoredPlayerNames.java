@@ -12,6 +12,8 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -53,25 +55,34 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 		}
 
 		scoreboard = getServer().getScoreboardManager().getNewScoreboard();
-		
+
 		playerColors = new HashMap<UUID, ChatColor>(16);
 
 		random = new Random();
 
 		getServer().getPluginManager().registerEvents(this, this);
-		
-		
+
 		for (Player player : getServer().getOnlinePlayers()) {
 			colorPlayer(player);
 		}
 
 	}
-	
+
 	@Override
 	public void onDisable() {
 		for (Player player : getServer().getOnlinePlayers()) {
 			uncolorPlayer(player);
 		}
+	}
+
+	@Override
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+		if (sender instanceof Player) {
+			colorPlayer((Player) sender);
+		} else {
+			sender.sendMessage(ChatColor.RED + "You must be a player to use this command");
+		}
+		return true;
 	}
 
 	@EventHandler
@@ -108,7 +119,7 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 		if (availableColors.isEmpty()) {
 			return ChatColor.RESET;
 		}
-		
+
 		double weightTotal = 0.0;
 		for (ChatColor color : availableColors) {
 			weightTotal += weight(color);
@@ -126,7 +137,7 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 		}
 		return elementFrom(availableColors);
 	}
-	
+
 	private void colorPlayer(Player player) {
 		ChatColor color = getPermColor(player);
 		if (color == null) {
@@ -136,6 +147,8 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 	}
 
 	private void colorPlayer(Player player, ChatColor color) {
+		uncolorPlayer(player);
+
 		playerColors.put(player.getUniqueId(), color);
 
 		player.setDisplayName(color + player.getName() + ChatColor.RESET);
@@ -147,22 +160,27 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 		team.addEntry(player.getName());
 		player.setScoreboard(scoreboard);
 	}
-	
+
 	private void uncolorPlayer(Player player) {
-		scoreboard.getTeam(player.getName()).unregister();
+		Team team = scoreboard.getTeam(player.getName());
+		if (team != null) {
+			team.unregister();
+		}
 		player.setDisplayName(player.getName());
 	}
 
 	private ChatColor getPermColor(Player player) {
 		ConfigurationSection colorSection = getConfig().getConfigurationSection("colors");
 		for (String colorName : colorSection.getKeys(false)) {
+			getLogger().info("color " + colorName);
 			if (player.hasPermission("coloredplayernames." + colorName)) {
+				getLogger().info("player has");
 				return ChatColor.getByChar(colorSection.getString(colorName + ".code"));
 			}
 		}
 		return null;
 	}
-	
+
 	private Set<ChatColor> possibleColors() {
 		Set<ChatColor> result = EnumSet.noneOf(ChatColor.class);
 		ConfigurationSection colorSection = getConfig().getConfigurationSection("colors");
@@ -172,7 +190,7 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 		}
 		return result;
 	}
-	
+
 	private double weight(ChatColor color) {
 		ConfigurationSection colorSection = getConfig().getConfigurationSection("colors");
 		for (String colorName : colorSection.getKeys(false)) {
@@ -189,7 +207,7 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 
 		Player player = event.getPlayer();
 
-		event.setFormat(ChatColor.GRAY + "<" + player.getDisplayName() + ChatColor.GRAY + "> " + ChatColor.RESET
+		event.setFormat(ChatColor.GRAY + "<" + ChatColor.RESET + player.getDisplayName() + ChatColor.GRAY + "> " + ChatColor.RESET
 				+ event.getMessage());
 
 	}
@@ -201,10 +219,10 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 		uncolorPlayer(event.getPlayer());
 
 	}
-	
+
 	private static final <E> E elementFrom(Collection<E> collection) {
 		int index = random.nextInt(collection.size());
-		
+
 		int i = 0;
 		for (E element : collection) {
 			if (index == i) {
@@ -212,7 +230,7 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 			}
 			i++;
 		}
-		
+
 		throw new AssertionError();
 	}
 
