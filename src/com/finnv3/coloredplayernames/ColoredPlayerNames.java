@@ -12,6 +12,8 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -76,7 +78,9 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (sender instanceof Player) {
-			colorPlayer((Player) sender);
+			Player player = (Player) sender;
+			colorPlayer(player);
+			player.sendMessage("Your name is now " + player.getDisplayName());
 		} else {
 			sender.sendMessage(ChatColor.RED + "You must be a player to use this command");
 		}
