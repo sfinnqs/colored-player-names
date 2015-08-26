@@ -73,6 +73,16 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 		}
 	}
 
+	@Override
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+		if (sender instanceof Player) {
+			colorPlayer((Player) sender);
+		} else {
+			sender.sendMessage(ChatColor.RED + "You must be a player to use this command");
+		}
+		return true;
+	}
+
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
 
