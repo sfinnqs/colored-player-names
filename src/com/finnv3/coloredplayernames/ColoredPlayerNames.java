@@ -174,7 +174,8 @@ public final class ColoredPlayerNames extends JavaPlugin implements Listener {
 	private ChatColor getPermColor(Player player) {
 		ConfigurationSection colorSection = getConfig().getConfigurationSection("colors");
 		for (String colorName : colorSection.getKeys(false)) {
-			if (player.hasPermission("coloredplayernames." + colorName)) {
+			String permission = "coloredplayernames" + colorName;
+			if (player.isPermissionSet(permission) && player.hasPermission(permission)) {
 				return ChatColor.getByChar(colorSection.getString(colorName + ".code"));
 			}
 		}

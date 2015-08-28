@@ -11,4 +11,4 @@ commands:
 permissions:
   coloredplayernames.changecolor:
     description: Allows use of the /changecolor command
-    default: false
+    default: op
