@@ -35,6 +35,7 @@ colors:
     aliases:
       - light gray
       - grey
+      - light grey
   dark_gray:
     name: dark gray
     weight: 1.0
