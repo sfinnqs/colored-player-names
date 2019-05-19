@@ -18,8 +18,11 @@ data class ColorSection(val color: ChatColor, val name: String, val weight: Doub
             ?: throw InvalidConfigurationException("Unable to determine color from name: $officialName")
         }
 
-        fun getName(section: ConfigurationSection) = section.getString("name") ?: section.name
-        fun getWeight(section: ConfigurationSection) = section.getDouble("weight")
-        fun getAliases(section: ConfigurationSection): Set<String> = TreeSet(section.getStringList("aliases"))
+        fun getName(section: ConfigurationSection) = section.getString("name", null) ?: section.name
+        fun getWeight(section: ConfigurationSection) = section.getDouble("weight", 0.0)
+        fun getAliases(section: ConfigurationSection): Set<String> = if (section.isSet("aliases") && section.isList("aliases"))
+            TreeSet(section.getStringList("aliases"))
+        else
+            emptySet()
     }
 }
