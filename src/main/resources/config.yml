@@ -1,0 +1,101 @@
+# ColoredPlayerNames config.yml
+auto-update: true
+scoreboard: true
+colors:
+  black:
+    weight: 1.0
+    aliases:
+      - dark
+  dark_blue:
+    name: dark blue
+    weight: 1.0
+  dark_green:
+    name: dark green
+    weight: 1.0
+  dark_aqua:
+    name: dark aqua
+    weight: 1.0
+    aliases:
+      - dark cyan
+      - dark tuquoise
+  dark_purple:
+    name: dark purple
+    weight: 1.0
+    aliases:
+      - violet
+      - dark magenta
+      - dark violet
+  gold:
+    weight: 1.0
+    aliases:
+      - dark yellow
+      - orange
+  gray:
+    weight: 1.0
+    aliases:
+      - light gray
+      - grey
+  dark_gray:
+    name: dark gray
+    weight: 1.0
+    aliases:
+      - dark grey
+  blue:
+    weight: 1.0
+    aliases:
+      - light blue
+  green:
+    weight: 1.0
+    aliases:
+      - light green
+  aqua:
+    weight: 1.0
+    aliases:
+      - cyan
+      - turquoise
+      - light aqua
+      - light cyan
+      - light turquoise
+  red:
+    weight: 1.0
+    aliases:
+      - light red
+  light_purple:
+    name: light purple
+    weight: 1.0
+    aliases:
+      - purple
+      - pink
+      - magenta
+  yellow:
+    weight: 1.0
+    aliases:
+      - light yellow
+  white:
+    weight: 1.0
+    aliases:
+      - light
+  obfuscated:
+    aliases:
+      - magic
+  bold:
+    aliases:
+      - thick
+      - heavy
+  strikethrough:
+    aliases:
+      - crossed out
+  underline:
+    aliases:
+      - underlined
+  italic:
+    aliases:
+      - italics
+      - italicized
+  reset:
+    aliases:
+      - none
+      - clear
+      - remove
+players:
+  jeb_: obfuscated

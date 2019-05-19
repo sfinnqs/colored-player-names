@@ -1,0 +1,24 @@
+name: ColoredPlayerNames
+version: ${project.version}
+description: A very simple plugin that colors players' names randomly on join
+load: POSTWORLD
+main: com.voichick.cpn.ColoredPlayerNames
+commands:
+  coloredplayernames:
+    description: Administrate ColoredPlayerNames
+    permission: coloredplayernames.reload
+    usage: /<command> reload
+  changecolor:
+    description: Change your name color
+    permission: coloredplayernames.changecolor
+    usage: /<command> [color]
+permissions:
+  coloredplayernames.changecolor:
+    description: Allows use of the /changecolor command
+    default: op
+  coloredplayernames.changecolor.specify:
+    description: Allows players to specify a color with the /changecolor command
+    default: op
+  coloredplayernames.reload:
+    description: Allows use of the /coloredplayernames reload command
+    default: op
