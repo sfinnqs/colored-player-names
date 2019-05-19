@@ -61,6 +61,7 @@ class CpnConfig(private val plugin: ColoredPlayerNames) {
             section["uuid"] = playerSection.uuid.toString()
             section["color"] = colorNames[playerSection.color]
         }
+        plugin.saveConfig()
     }
 
     private fun getPermissionColor(player: Player): ChatColor? {
