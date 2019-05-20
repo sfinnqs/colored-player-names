@@ -47,9 +47,6 @@ class ColoredPlayerNames : JavaPlugin() {
         setupCommand("changecolor", ChangeColorExecutor(this))
         setupCommand("coloredplayernames", ReloadExecutor(this))
 
-        for (player in server.onlinePlayers)
-            playerColors[player] = pickColor()
-
         Metrics(this)
 
     }
@@ -71,6 +68,10 @@ class ColoredPlayerNames : JavaPlugin() {
             PlayerColors()
         }
         privateColors = newColors
+
+        for (player in server.onlinePlayers)
+            playerColors[player] = pickColor()
+
         return newConfig to newColors
     }
 
