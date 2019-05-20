@@ -23,7 +23,7 @@ class ChangeColorExecutor(private val plugin: ColoredPlayerNames) : TabExecutor 
 
         val colors = plugin.playerColors
         val oldColor = colors[sender]
-        val colorPicker = plugin.colorPicker
+        val colorPicker = plugin.pickColor
 
         val colorString = args.takeUnless { it.isEmpty() }?.joinToString(" ")
         val newColor = when {

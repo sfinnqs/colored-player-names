@@ -22,7 +22,7 @@ class CpnListener(private val plugin: ColoredPlayerNames) : Listener {
 
         val player = event.player
         plugin.playerColors[player] = plugin.cpnConfig.getStaticColor(player)
-                ?: plugin.colorPicker()
+                ?: plugin.pickColor()
 
         event.joinMessage = "${player.displayName}$RESET$YELLOW joined the game."
     }
