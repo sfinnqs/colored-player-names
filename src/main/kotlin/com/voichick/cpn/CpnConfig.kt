@@ -19,10 +19,9 @@ class CpnConfig(private val plugin: ColoredPlayerNames) {
     }
 
     val colors = Colors(colorSections)
-    val colorNames = ColorNames(colorSections)
+    val colorNames = getColorNames(colorSections)
+    val aliases = getAliases(colorSections)
     val weights = getWeights(colorSections)
-    val completion = Completion(colorNames.toList())
-    val aliasCompletion = Completion(colorSections.values.flatMap { it.aliases }.sorted())
 
     private val playerSections: MutableMap<UUID, PlayerSection>
 
@@ -95,9 +94,9 @@ class CpnConfig(private val plugin: ColoredPlayerNames) {
         playerSections.putIfAbsent(player.uniqueId, playerSection)
     }
 
-    companion object {
+    private companion object {
 
-        private fun getColorSections(colorsSection: ConfigurationSection): Map<ChatColor, ColorSection> {
+        fun getColorSections(colorsSection: ConfigurationSection): Map<ChatColor, ColorSection> {
             val result = EnumMap<ChatColor, ColorSection>(ChatColor::class.java)
             for (key in colorsSection.getKeys(false)) {
                 val section = colorsSection.getConfigurationSection(key) ?: continue
@@ -128,15 +127,28 @@ class CpnConfig(private val plugin: ColoredPlayerNames) {
             return result
         }
 
-        private fun getWeights(colorSections: Map<ChatColor, ColorSection>): Map<ChatColor, Double> {
-            val result = EnumMap<ChatColor, Double>(ChatColor::class.java)
-            for (section in colorSections.values) {
-                result[section.color] = section.weight
-            }
+        fun getColorNames(colorSections: Map<ChatColor, ColorSection>): Map<ChatColor, String> {
+            val result = EnumMap<ChatColor, String>(ChatColor::class.java)
+            for (section in colorSections.values)
+                result[section.color] = section.name
             return result
         }
 
-        private fun getPlayerSections(playersSection: ConfigurationSection, colors: Colors, colorNames: ColorNames): MutableMap<UUID, PlayerSection> {
+        fun getWeights(colorSections: Map<ChatColor, ColorSection>): Map<ChatColor, Double> {
+            val result = EnumMap<ChatColor, Double>(ChatColor::class.java)
+            for (section in colorSections.values)
+                result[section.color] = section.weight
+            return result
+        }
+
+        fun getAliases(colorSections: Map<ChatColor, ColorSection>): Map<ChatColor, Set<String>> {
+            val result = EnumMap<ChatColor, Set<String>>(ChatColor::class.java)
+            for (section in colorSections.values)
+                result[section.color] = section.aliases
+            return result
+        }
+
+        fun getPlayerSections(playersSection: ConfigurationSection, colors: Colors, colorNames: Map<ChatColor, String>): MutableMap<UUID, PlayerSection> {
             val result = TreeMap<UUID, PlayerSection>()
             for (key in playersSection.getKeys(false)) {
                 val section = playersSection.getConfigurationSection(key)

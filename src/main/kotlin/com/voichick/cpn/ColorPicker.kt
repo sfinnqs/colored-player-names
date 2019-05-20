@@ -23,7 +23,7 @@ class ColorPicker(private val plugin: ColoredPlayerNames) {
     private fun possibleColors(): Map<ChatColor, Double> {
         val colors = plugin.playerColors
         val weights = plugin.cpnConfig.weights
-        val lowestCount = weights.keys.map { colors.count(it) }.min()
+        val lowestCount = weights.filterValues { it >= 0 }.keys.map { colors.count(it) }.min()
         return weights.filterKeys { colors.count(it) == lowestCount }
     }
 

@@ -3,42 +3,49 @@ auto-update: true
 scoreboard: true
 colors:
   black:
-    weight: 1.0
+    weight: 0.2
     aliases:
       - dark
   dark_blue:
     name: dark blue
-    weight: 1.0
+    weight: 0.5
+    aliases:
+      - navy
   dark_green:
     name: dark green
-    weight: 1.0
+    weight: 0.5
   dark_aqua:
     name: dark aqua
-    weight: 1.0
+    weight: 0.5
     aliases:
       - dark cyan
       - dark tuquoise
+  dark_red:
+    name: dark red
+    weight: 0.5
+    aliases:
+      - maroon
   dark_purple:
     name: dark purple
-    weight: 1.0
+    weight: 0.5
     aliases:
       - violet
       - dark magenta
       - dark violet
   gold:
-    weight: 1.0
+    weight: 0.5
     aliases:
       - dark yellow
       - orange
   gray:
-    weight: 1.0
+    weight: 0.2
     aliases:
       - light gray
       - grey
       - light grey
   dark_gray:
     name: dark gray
-    weight: 1.0
+    weight: 0.2
     aliases:
       - dark grey
   blue:
@@ -73,7 +80,7 @@ colors:
     aliases:
       - light yellow
   white:
-    weight: 1.0
+    weight: 0.2
     aliases:
       - light
   obfuscated:
