@@ -1,6 +1,7 @@
 package com.voichick.cpn
 
 import org.bukkit.ChatColor
+import java.util.*
 import java.util.concurrent.ThreadLocalRandom
 
 class ColorPicker(private val plugin: ColoredPlayerNames) {
@@ -20,11 +21,25 @@ class ColorPicker(private val plugin: ColoredPlayerNames) {
         return null
     }
 
-    private fun possibleColors(): Map<ChatColor, Double> {
+    fun availableColors(): Set<ChatColor> {
+        val result = EnumSet.noneOf(ChatColor::class.java)
+        result.addAll(possibleColors().keys)
+        result.addAll(possibleColors(false).keys)
+        return result
+    }
+
+    private fun possibleColors(posWeightsOnly: Boolean = true): Map<ChatColor, Double> {
         val colors = plugin.playerColors
         val weights = plugin.cpnConfig.weights
-        val lowestCount = weights.filterValues { it >= 0 }.keys.map { colors.count(it) }.min()
-        return weights.filterKeys { colors.count(it) == lowestCount }
+        val posWeights = if (posWeightsOnly)
+            weights.filterValues { it >=0 }
+        else
+            weights
+        val lowestCount = posWeights.keys.map { colors.count(it) }.min()
+        val filtered =  posWeights.filterKeys { colors.count(it) == lowestCount }
+        val result = EnumMap<ChatColor, Double>(ChatColor::class.java)
+        result.putAll(filtered)
+        return filtered
     }
 
 }

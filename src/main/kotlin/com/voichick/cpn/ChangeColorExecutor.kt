@@ -1,5 +1,6 @@
 package com.voichick.cpn
 
+import org.bukkit.ChatColor
 import org.bukkit.ChatColor.RED
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -29,15 +30,10 @@ class ChangeColorExecutor(private val plugin: ColoredPlayerNames) : TabExecutor 
                 sender.sendMessage("${RED}Unrecognized color: \"$colorString\"")
                 return false
             }
-            val officialName = result.officialName
-            if (sender.hasPermission("coloredplayernames.changecolor.$officialName")) {
-                result
-            } else {
-                val message = "${RED}You do not have permission to set set yourself to $colorString"
-                val messages = arrayOf(message, "/$label")
-                sender.sendMessage(messages)
+            if (result != oldColor && !isPermittedChange(sender, result)) {
                 return true
             }
+            result
         }
 
         colors[sender] = newColor
@@ -54,17 +50,45 @@ class ChangeColorExecutor(private val plugin: ColoredPlayerNames) : TabExecutor 
             return emptyList()
         val config = plugin.cpnConfig
         val permColors = config.colors.filter {
-            sender.hasPermission("coloredplayernames.changecolor.${it.officialName}")
-        }
-        val permColorNames = permColors.mapNotNull { config.colorNames[it] }
-        val completion = Completion(permColorNames)
+            sender.hasPermission("coloredplayernames.changecolor.specify.${it.officialName}")
+        } - plugin.playerColors[sender]
+        val forceFiltered = if (sender.hasPermission("coloredplayernames.changecolor.force"))
+            permColors
+        else
+            permColors.intersect(plugin.pickColor.availableColors())
+
+        val colorNames = forceFiltered.mapNotNull { config.colorNames[it] }
+        val completion = Completion(colorNames)
         val completionStrings = completionStrings(completion, args)
         if (completionStrings.isNotEmpty())
             return completionStrings
 
-        val permColorAliases = permColors.mapNotNull { config.aliases[it] }.flatten()
-        val aliasCompletion = Completion(permColorAliases)
+        val aliases = permColors.mapNotNull { config.aliases[it] }.flatten()
+        val aliasCompletion = Completion(aliases)
         return completionStrings(aliasCompletion, args)
+    }
+
+    private fun isPermittedChange(player: Player, color: ChatColor): Boolean {
+        val colorName = plugin.cpnConfig.colorNames[color]
+        val officialName = color.officialName
+        if (!player.hasPermission("coloredplayernames.changecolor.specify.$officialName")) {
+            val message = "${RED}You do not have permission to set yourself to $colorName"
+            player.sendMessage(message)
+            return false
+        }
+
+        if (player.hasPermission("coloredplayernames.changecolor.force"))
+            return true
+        if (plugin.pickColor.availableColors().contains(color))
+            return true
+        val count = plugin.playerColors.count(color)
+        assert(count > 0)
+        val message = if (count == 1)
+            "$colorName is unavailable because it is currently in use by another player"
+        else
+            "$colorName is unavailable because it is currently in use by $count other players"
+        player.sendMessage(message)
+        return false
     }
 
     private tailrec fun completionStrings(completion: Completion, args: Array<String>, fromIndex: Int = 0): List<String> = if (fromIndex == args.lastIndex) {
