@@ -100,10 +100,5 @@ colors:
     aliases:
       - italics
       - italicized
-  reset:
-    aliases:
-      - none
-      - clear
-      - remove
 players:
   jeb_: obfuscated
