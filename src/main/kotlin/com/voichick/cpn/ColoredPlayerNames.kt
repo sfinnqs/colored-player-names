@@ -54,6 +54,7 @@ class ColoredPlayerNames : JavaPlugin() {
     /**
      * Uncolors all players, reloads the configuration, then re-colors all players.
      */
+    @Synchronized
     fun reload(): Pair<CpnConfig, PlayerColors> {
         uncolorAll()
         saveDefaultConfig()
