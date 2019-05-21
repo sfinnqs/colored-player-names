@@ -6,11 +6,17 @@ main: com.voichick.cpn.ColoredPlayerNames
 commands:
   coloredplayernames:
     description: Administrate ColoredPlayerNames
+    aliases:
+      - cpn
     permission: coloredplayernames.reload
+    permission-message: §cYou do not have permission to administrate the ColoredPlayerNames plugin
     usage: /<command> reload
   changecolor:
     description: Change your name color
+    aliases:
+      - cc
     permission: coloredplayernames.changecolor
+    permission-message: §cYou do not have permission to change your color
     usage: /<command> [color]
 permissions:
   coloredplayernames.changecolor:
