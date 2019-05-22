@@ -91,22 +91,24 @@ class ChangeColorExecutor(private val plugin: ColoredPlayerNames) : TabExecutor 
         return false
     }
 
-    private tailrec fun completionStrings(completion: Completion, args: Array<String>, fromIndex: Int = 0): List<String> = if (fromIndex == args.lastIndex) {
-        val prefix = args.last()
-        completion.strings.filter { matches(it, prefix) }
-    } else {
-        val firstArg = args[fromIndex].toLowerCase(Locale.ROOT)
-        val subcompletion = completion.subcompletions[firstArg]
-        if (subcompletion == null)
-            emptyList()
-        else
-            completionStrings(subcompletion, args, fromIndex + 1)
-    }
+    companion object {
+        tailrec fun completionStrings(completion: Completion, args: Array<String>, fromIndex: Int = 0): List<String> = if (fromIndex == args.lastIndex) {
+            val prefix = args.last()
+            completion.strings.filter { matches(it, prefix) }
+        } else {
+            val firstArg = args[fromIndex].toLowerCase(Locale.ROOT)
+            val subcompletion = completion.subcompletions[firstArg]
+            if (subcompletion == null)
+                emptyList()
+            else
+                completionStrings(subcompletion, args, fromIndex + 1)
+        }
 
-    private fun matches(completion: String, typed: String): Boolean {
-        val condensedCompletion = condenseString(completion)
-        val condensedTyped = condenseString(typed)
-        return condensedCompletion.startsWith(condensedTyped) && condensedCompletion != condensedTyped
+        private fun matches(completion: String, typed: String): Boolean {
+            val condensedCompletion = condenseString(completion)
+            val condensedTyped = condenseString(typed)
+            return condensedCompletion.startsWith(condensedTyped) && condensedCompletion != condensedTyped
+        }
     }
 
 }

@@ -8,9 +8,9 @@ commands:
     description: Administrate ColoredPlayerNames
     aliases:
       - cpn
-    permission: coloredplayernames.reload
+    permission: coloredplayernames.admin
     permission-message: §cYou do not have permission to administrate the ColoredPlayerNames plugin
-    usage: /<command> reload
+    usage: /<command> <reload|set>
   changecolor:
     description: Change your name color
     aliases:
@@ -117,6 +117,6 @@ permissions:
   coloredplayernames.changecolor.force:
     description: Allows a player to specify an unavailable color (including colors already in use by other players)
     default: op
-  coloredplayernames.reload:
-    description: Allows use of the /coloredplayernames reload command
+  coloredplayernames.admin:
+    description: Allows use of the /coloredplayernames command
     default: op

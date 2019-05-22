@@ -5,6 +5,7 @@ import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.configuration.InvalidConfigurationException
 import org.bukkit.entity.Player
 import java.util.*
+import kotlin.collections.ArrayList
 
 class CpnConfig(private val plugin: ColoredPlayerNames) {
 
@@ -32,8 +33,20 @@ class CpnConfig(private val plugin: ColoredPlayerNames) {
 
     fun getStaticColor(player: Player) = playerSections[player.uniqueId]?.color
 
-    fun updateWithPlayer(player: Player) {
-        updateWithPermission(player)
+    fun updateWithPlayer(player: Player): Boolean {
+        val permColor = getPermissionColor(player) ?: return false
+        val playerSection = PlayerSection(player.name, player.uniqueId, permColor)
+        return updateWithPlayerSection(playerSection)
+    }
+
+    fun updateWithPlayerSection(playerSection: PlayerSection): Boolean {
+        updateAllNames()
+        val uuid = playerSection.uuid
+        val oldSection = playerSections[uuid]
+        if (oldSection?.color == playerSection.color)
+            return false
+        playerSections[uuid] = playerSection
+        return true
     }
 
     fun writeToFile() {
@@ -63,6 +76,17 @@ class CpnConfig(private val plugin: ColoredPlayerNames) {
         plugin.saveConfig()
     }
 
+    private fun getSectionOrSet(path: String): ConfigurationSection {
+        val config = plugin.config
+        val result = config.getConfigurationSection(path) ?: return config.createSection(path)
+        return if (config.isSet(path) && config.isConfigurationSection(path)) {
+            result
+        } else {
+            val default = result.defaultSection ?: return config.createSection(path)
+            config.createSection(path, default.getValues(true))
+        }
+    }
+
     private fun getPermissionColor(player: Player): ChatColor? {
         for (color in ChatColor.values()) {
             val colorName = colorNames[color] ?: color.officialName
@@ -77,21 +101,15 @@ class CpnConfig(private val plugin: ColoredPlayerNames) {
         return null
     }
 
-    private fun getSectionOrSet(path: String): ConfigurationSection {
-        val config = plugin.config
-        val result = config.getConfigurationSection(path) ?: return config.createSection(path)
-        return if (config.isSet(path) && config.isConfigurationSection(path)) {
-            result
-        } else {
-            val default = result.defaultSection ?: return config.createSection(path)
-            config.createSection(path, default.getValues(true))
+    private fun updateAllNames() {
+        val playerSectionsCopy = ArrayList(playerSections.values)
+        for (playerSection in playerSectionsCopy) {
+            val uuid = playerSection.uuid
+            val name = plugin.server.getOfflinePlayer(uuid).name
+            if (name == null || name == playerSection.name) continue
+            val newSection = PlayerSection(name, uuid, playerSection.color)
+            playerSections[uuid] = newSection
         }
-    }
-
-    private fun updateWithPermission(player: Player) {
-        val permColor = getPermissionColor(player) ?: return
-        val playerSection = PlayerSection(player.name, player.uniqueId, permColor)
-        playerSections.putIfAbsent(player.uniqueId, playerSection)
     }
 
     private companion object {
