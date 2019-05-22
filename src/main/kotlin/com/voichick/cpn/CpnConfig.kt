@@ -93,7 +93,7 @@ class CpnConfig(private val plugin: ColoredPlayerNames) {
             val permission = "coloredplayernames.$colorName"
             if (player.isPermissionSet(permission) && player.hasPermission(permission)) {
                 plugin.logger.warning {
-                    "Player \"$player\" still has deprecated permission: $permission"
+                    "Player \"${player.name}\" still has deprecated permission: $permission"
                 }
                 return color
             }
