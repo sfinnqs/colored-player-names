@@ -45,7 +45,7 @@ class ColoredPlayerNames : JavaPlugin() {
         server.pluginManager.registerEvents(CpnListener(this), this)
 
         setupCommand("changecolor", ChangeColorExecutor(this))
-        setupCommand("coloredplayernames", ReloadExecutor(this))
+        setupCommand("coloredplayernames", CpnExecutor(this))
 
         Metrics(this)
 

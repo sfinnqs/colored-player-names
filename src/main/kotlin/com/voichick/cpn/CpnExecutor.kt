@@ -5,7 +5,7 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabExecutor
 
-class ReloadExecutor(private val plugin: ColoredPlayerNames) : TabExecutor {
+class CpnExecutor(private val plugin: ColoredPlayerNames) : TabExecutor {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String?>): Boolean {
         val firstArg = args.getOrNull(0)
         if (firstArg == null) {
