@@ -17,26 +17,33 @@ class ChangeColorExecutor(private val plugin: ColoredPlayerNames) : TabExecutor 
             return true
         }
 
-        val colors = plugin.playerColors
-        val oldColor = colors[sender]
+        val playerColors = plugin.playerColors
+        val oldColor = playerColors[sender]
         val pickColor = plugin.pickColor
 
         val colorString = args.takeUnless { it.isEmpty() }?.joinToString(" ")
         val newColor = if (colorString == null) {
             pickColor()
         } else {
-            val result = plugin.cpnConfig.colors[colorString]
-            if (result == null) {
-                sender.sendMessage("${RED}Unrecognized color: \"$colorString\"")
-                return false
+
+            val colors = plugin.cpnConfig.colors
+            val canSpecify = colors.any {
+                sender.hasPermission("coloredplayernames.changecolor.specify.${it.officialName}")
             }
-            if (result != oldColor && !isPermittedChange(sender, result)) {
+
+            val result = colors[colorString]
+            if (result == null) {
+                val error = "${RED}Unrecognized color: \"$colorString\""
+                sender.sendMessage(arrayOf(error, usage(canSpecify, label)))
                 return true
             }
-            result
+            if (result != oldColor && !isPermittedChange(sender, result, canSpecify, label))
+                return true
+            else
+                result
         }
 
-        colors[sender] = newColor
+        playerColors[sender] = newColor
         val displayName = sender.displayName
         if (oldColor == newColor)
             sender.sendMessage("Your name is still $displayName")
@@ -68,12 +75,20 @@ class ChangeColorExecutor(private val plugin: ColoredPlayerNames) : TabExecutor 
         return completionStrings(aliasCompletion, args)
     }
 
-    private fun isPermittedChange(player: Player, color: ChatColor): Boolean {
-        val colorName = plugin.cpnConfig.colorNames[color]
+    private fun isPermittedChange(player: Player, color: ChatColor, canSpecify: Boolean, label: String): Boolean {
+        val config = plugin.cpnConfig
+        val colorName = config.colorNames[color]
         val officialName = color.officialName
         if (!player.hasPermission("coloredplayernames.changecolor.specify.$officialName")) {
-            val message = "${RED}You do not have permission to set yourself to $colorName"
-            player.sendMessage(message)
+            if (canSpecify) {
+                val error = "${RED}You do not have permission to set yourself to $colorName"
+                val usage = "Usage: /$label [color]"
+                player.sendMessage(arrayOf(error, usage))
+            } else {
+                val error = "${RED}You do not have permission to specify your color"
+                val usage = "Usage: /$label"
+                player.sendMessage(arrayOf(error, usage))
+            }
             return false
         }
 
@@ -109,6 +124,11 @@ class ChangeColorExecutor(private val plugin: ColoredPlayerNames) : TabExecutor 
             val condensedTyped = condenseString(typed)
             return condensedCompletion.startsWith(condensedTyped) && condensedCompletion != condensedTyped
         }
+
+        fun usage(canSpecify: Boolean, label: String) = if (canSpecify)
+            "Usage: /$label [color]"
+        else
+            "Usage: /$label"
     }
 
 }
