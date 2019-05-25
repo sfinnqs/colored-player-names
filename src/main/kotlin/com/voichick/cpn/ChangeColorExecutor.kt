@@ -17,6 +17,11 @@ class ChangeColorExecutor(private val plugin: ColoredPlayerNames) : TabExecutor 
             return true
         }
 
+        if (!sender.hasPermission("coloredplayernames.color")) {
+            sender.sendMessage("${RED}You do not have permission to color your name")
+            return true
+        }
+
         val playerColors = plugin.playerColors
         val oldColor = playerColors[sender]
 
@@ -42,7 +47,7 @@ class ChangeColorExecutor(private val plugin: ColoredPlayerNames) : TabExecutor 
                 playerColors[sender] = result
         }
 
-        val displayName = sender.displayName
+        val displayName = playerColors.getDisplayName(sender)
         if (playerColors[sender] == oldColor)
             sender.sendMessage("Your name is still $displayName")
         else
@@ -51,7 +56,7 @@ class ChangeColorExecutor(private val plugin: ColoredPlayerNames) : TabExecutor 
     }
 
     override fun onTabComplete(sender: CommandSender, command: Command, alias: String, args: Array<String>): List<String> {
-        if (sender !is Player)
+        if (sender !is Player || !sender.hasPermission("coloredplayernames.color"))
             return emptyList()
         val config = plugin.cpnConfig
         val permColors = config.colors.filter {

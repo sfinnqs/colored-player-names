@@ -14,23 +14,13 @@ class PlayerColors(private val config: CpnConfig, private val board: Scoreboard?
     private val counts = EnumMap<ChatColor, Int>(ChatColor::class.java)
     private val lastColors = mutableMapOf<Player, ChatColor>()
 
-    private val replacementsRef = AtomicReference<Map<String, String>>()
+    private val replacementsRef = AtomicReference<Map<String, String>>(emptyMap())
     val replacements: Map<String, String>
         get() = replacementsRef.get()
 
     operator fun get(player: Player) = playerColors[player]
 
     operator fun set(player: Player, color: ChatColor?) {
-
-        val name = player.name
-
-        // Update display name
-        val displayName = if (color == null)
-            name
-        else
-            color.toString() + name + RESET
-        player.setDisplayName(displayName)
-        player.setPlayerListName(displayName)
 
         // Update counts
         val oldColor = if (color == null)
@@ -42,15 +32,20 @@ class PlayerColors(private val config: CpnConfig, private val board: Scoreboard?
         if (color != null)
             counts.merge(color, 1, Int::plus)
 
+        // Update display name
+        val displayName = getDisplayName(player)
+        player.setDisplayName(displayName)
+        player.setPlayerListName(displayName)
+
         // Update replacements
-        val newReplacements = TreeMap<String, String>()
-        for (other in playerColors.keys)
-            newReplacements[other.name] = other.displayName
+        val newReplacements = playerColors.keys.associate { it.name to  getDisplayName(it) }
         replacementsRef.set(newReplacements)
 
         // Update lastColors
         if (color != null)
             lastColors[player] = color
+
+        val name = player.name
 
         if (board == null) return
         // Set player's scoreboard to board
@@ -81,6 +76,15 @@ class PlayerColors(private val config: CpnConfig, private val board: Scoreboard?
     }
 
     fun count(color: ChatColor) = counts[color] ?: 0
+
+    fun getDisplayName(player: Player): String {
+        val color = playerColors[player]
+        val name = player.name
+        return if (color == null)
+            name
+        else
+            color.toString() + name + RESET
+    }
 
     fun changeColor(player: Player) {
         val newColor = pickColor(player)
