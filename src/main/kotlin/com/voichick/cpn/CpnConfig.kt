@@ -34,8 +34,10 @@ class CpnConfig(private val plugin: ColoredPlayerNames) {
     fun getStaticColor(player: Player) = playerSections[player.uniqueId]?.color
 
     fun updateWithPlayer(player: Player): Boolean {
+        val uuid = player.uniqueId
+        if (playerSections.containsKey(uuid)) return false
         val permColor = getPermissionColor(player) ?: return false
-        val playerSection = PlayerSection(player.name, player.uniqueId, permColor)
+        val playerSection = PlayerSection(player.name, uuid, permColor)
         return updateWithPlayerSection(playerSection)
     }
 
