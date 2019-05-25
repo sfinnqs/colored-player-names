@@ -51,6 +51,8 @@ class CpnConfig(private val plugin: ColoredPlayerNames) {
         return true
     }
 
+    fun unsetStaticColor(uuid: UUID) = playerSections.remove(uuid) != null
+
     fun writeToFile() {
         val config = plugin.config
         config["auto-update"] = autoUpdate

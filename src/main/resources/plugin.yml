@@ -10,7 +10,7 @@ commands:
       - cpn
     permission: coloredplayernames.admin
     permission-message: §cYou do not have permission to administrate the ColoredPlayerNames plugin
-    usage: /<command> <reload|set>
+    usage: /<command> <reload | set | unset>
   changecolor:
     description: Change your name color
     aliases:
