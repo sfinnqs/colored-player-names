@@ -71,6 +71,8 @@ class ColoredPlayerNames : JavaPlugin() {
         for (player in server.onlinePlayers)
             if (player.hasPermission("coloredplayernames.color"))
                 playerColors.changeColor(player)
+            else
+                playerColors[player] = null
 
         return newConfig to newColors
     }

@@ -31,7 +31,6 @@ class CpnListener(private val plugin: ColoredPlayerNames) : Listener {
 
     @EventHandler
     fun onAsyncPlayerChat(event: AsyncPlayerChatEvent) {
-        println(event.format)
         event.format = "$GRAY<$RESET%1\$s$RESET$GRAY>$RESET %2\$s"
         var message = event.message
         for ((name, displayName) in plugin.playerColors.replacements)
