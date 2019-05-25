@@ -5,17 +5,18 @@ import org.bukkit.ChatColor.RESET
 import org.bukkit.entity.Player
 import org.bukkit.scoreboard.Scoreboard
 import java.util.*
-import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ThreadLocalRandom
 import java.util.concurrent.atomic.AtomicReference
 
-class PlayerColors(private val board: Scoreboard? = null) {
+class PlayerColors(private val config: CpnConfig, private val board: Scoreboard? = null) {
 
     private val playerColors = mutableMapOf<Player, ChatColor>()
     private val counts = EnumMap<ChatColor, Int>(ChatColor::class.java)
+    private val lastColors = mutableMapOf<Player, ChatColor>()
 
     private val replacementsRef = AtomicReference<Map<String, String>>()
     val replacements: Map<String, String>
-    get() = replacementsRef.get()
+        get() = replacementsRef.get()
 
     operator fun get(player: Player) = playerColors[player]
 
@@ -47,8 +48,11 @@ class PlayerColors(private val board: Scoreboard? = null) {
             newReplacements[other.name] = other.displayName
         replacementsRef.set(newReplacements)
 
-        if (board == null)
-            return
+        // Update lastColors
+        if (color != null)
+            lastColors[player] = color
+
+        if (board == null) return
         // Set player's scoreboard to board
         val playerBoard = player.scoreboard
         val teamName = TEAM_PREFIX + name
@@ -58,7 +62,7 @@ class PlayerColors(private val board: Scoreboard? = null) {
                 player.scoreboard = board
             } else {
                 ColoredPlayerNames.logger.warning {
-                    "Player \"$name\" is currently on team \"${team.name}\". For full CPN functionality, please remove them from this team."
+                    "Player \"$name\" is currently on team \"${team.name}\". For full CPN functionality, please remove them from this team or turn off scoreboard in the configuration."
                 }
                 return
             }
@@ -77,6 +81,58 @@ class PlayerColors(private val board: Scoreboard? = null) {
     }
 
     fun count(color: ChatColor) = counts[color] ?: 0
+
+    fun changeColor(player: Player) {
+        val newColor = pickColor(player)
+        set(player, newColor)
+    }
+
+    fun availableColors(player: Player): Set<ChatColor> {
+        val result = EnumSet.noneOf(ChatColor::class.java)
+        result.addAll(possibleColors(player, true).keys)
+        result.addAll(possibleColors(player, false).keys)
+        return result
+    }
+
+    private fun pickColor(player: Player): ChatColor? {
+        val staticColor = config.getStaticColor(player)
+        if (staticColor != null)
+            return staticColor
+        val colors = possibleColors(player)
+        val lastColor = lastColors[player]
+        if (colors.size >= 2) colors.remove(lastColor)
+        val weightSum = colors.values.sum()
+        if (weightSum <= 0.0)
+            return null
+        val randomVal = ThreadLocalRandom.current().nextDouble(weightSum)
+        var accumulation = 0.0
+        for (entry in colors) {
+            accumulation += entry.value
+            if (accumulation >= randomVal)
+                return entry.key
+        }
+        return null
+    }
+
+    private fun possibleColors(player: Player, posWeightsOnly: Boolean = true): MutableMap<ChatColor, Double> {
+        val weights = config.weights
+        val posWeights = if (posWeightsOnly)
+            weights.filterValues { it >= 0 }
+        else
+            weights
+        val playerColor = playerColors[player]
+        val updatedCounts = posWeights.keys.associateWith {
+            if (it == playerColor)
+                count(it) - 1
+            else
+                count(it)
+        }
+        val lowestCount = updatedCounts.values.min()
+        val filtered = posWeights.filterKeys { updatedCounts[it] == lowestCount }
+        val result = EnumMap<ChatColor, Double>(ChatColor::class.java)
+        result.putAll(filtered)
+        return result
+    }
 
     private companion object {
         private const val TEAM_PREFIX = "__CPN__"

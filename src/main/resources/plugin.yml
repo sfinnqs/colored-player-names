@@ -19,75 +19,124 @@ commands:
     permission-message: §cYou do not have permission to change your color
     usage: /<command> [color]
 permissions:
+  coloredplayernames.color:
+    description: Allows coloring of a player's name
+    default: true
   coloredplayernames.changecolor:
     description: Allows use of the /changecolor command
     default: true
+    children:
+      coloredplayernames.color: true
   coloredplayernames.changecolor.specify.black:
     description: Allows a player to set their color to black
     default: true
+    children:
+      coloredplayernames.changecolor: true
   coloredplayernames.changecolor.specify.dark_blue:
     description: Allows a player to set their color to dark_blue
     default: true
+    children:
+      coloredplayernames.changecolor: true
   coloredplayernames.changecolor.specify.dark_green:
     description: Allows a player to set their color to dark_green
     default: true
+    children:
+      coloredplayernames.changecolor: true
   coloredplayernames.changecolor.specify.dark_aqua:
     description: Allows a player to set their color to dark_aqua
     default: true
+    children:
+      coloredplayernames.changecolor: true
   coloredplayernames.changecolor.specify.dark_red:
     description: Allows a player to set their color to dark_red
     default: true
+    children:
+      coloredplayernames.changecolor: true
   coloredplayernames.changecolor.specify.dark_purple:
     description: Allows a player to set their color to dark_purple
     default: true
+    children:
+      coloredplayernames.changecolor: true
   coloredplayernames.changecolor.specify.gold:
     description: Allows a player to set their color to gold
     default: true
+    children:
+      coloredplayernames.changecolor: true
   coloredplayernames.changecolor.specify.gray:
     description: Allows a player to set their color to gray
     default: true
+    children:
+      coloredplayernames.changecolor: true
   coloredplayernames.changecolor.specify.dark_gray:
     description: Allows a player to set their color to dark_gray
     default: true
+    children:
+      coloredplayernames.changecolor: true
   coloredplayernames.changecolor.specify.blue:
     description: Allows a player to set their color to blue
     default: true
+    children:
+      coloredplayernames.changecolor: true
   coloredplayernames.changecolor.specify.green:
     description: Allows a player to set their color to green
     default: true
+    children:
+      coloredplayernames.changecolor: true
   coloredplayernames.changecolor.specify.aqua:
     description: Allows a player to set their color to aqua
     default: true
+    children:
+      coloredplayernames.changecolor: true
   coloredplayernames.changecolor.specify.red:
     description: Allows a player to set their color to red
     default: true
+    children:
+      coloredplayernames.changecolor: true
   coloredplayernames.changecolor.specify.light_purple:
     description: Allows a player to set their color to light_purple
     default: true
+    children:
+      coloredplayernames.changecolor: true
   coloredplayernames.changecolor.specify.yellow:
     description: Allows a player to set their color to yellow
     default: true
+    children:
+      coloredplayernames.changecolor: true
   coloredplayernames.changecolor.specify.white:
     description: Allows a player to set their color to white
     default: true
+    children:
+      coloredplayernames.changecolor: true
   coloredplayernames.changecolor.specify.obfuscated:
     description: Allows a player to set their color to obfuscated
     default: op
+    children:
+      coloredplayernames.changecolor: true
   coloredplayernames.changecolor.specify.bold:
     description: Allows a player to set their color to bold
     default: op
+    children:
+      coloredplayernames.changecolor: true
   coloredplayernames.changecolor.specify.strikethrough:
     description: Allows a player to set their color to strikethrough
     default: op
+    children:
+      coloredplayernames.changecolor: true
   coloredplayernames.changecolor.specify.underline:
     description: Allows a player to set their color to underline
     default: op
+    children:
+      coloredplayernames.changecolor: true
   coloredplayernames.changecolor.specify.italic:
     description: Allows a player to set their color to italic
     default: op
+    children:
+      coloredplayernames.changecolor: true
   coloredplayernames.changecolor.specify.reset:
     description: Allows a player to set their color to reset
     default: op
+    children:
+      coloredplayernames.changecolor: true
   coloredplayernames.changecolor.specify.*:
     description: Allows a player to set their color to anything
     default: op
@@ -117,6 +166,8 @@ permissions:
   coloredplayernames.changecolor.force:
     description: Allows a player to specify an unavailable color (including colors already in use by other players)
     default: op
+    children:
+      coloredplayernames.changecolor: true
   coloredplayernames.admin:
     description: Allows use of the /coloredplayernames command
     default: op

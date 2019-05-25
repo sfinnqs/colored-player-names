@@ -19,11 +19,10 @@ class ChangeColorExecutor(private val plugin: ColoredPlayerNames) : TabExecutor 
 
         val playerColors = plugin.playerColors
         val oldColor = playerColors[sender]
-        val pickColor = plugin.pickColor
 
         val colorString = args.takeUnless { it.isEmpty() }?.joinToString(" ")
-        val newColor = if (colorString == null) {
-            pickColor()
+        if (colorString == null) {
+            playerColors.changeColor(sender)
         } else {
 
             val colors = plugin.cpnConfig.colors
@@ -40,12 +39,11 @@ class ChangeColorExecutor(private val plugin: ColoredPlayerNames) : TabExecutor 
             if (result != oldColor && !isPermittedChange(sender, result, canSpecify, label))
                 return true
             else
-                result
+                playerColors[sender] = result
         }
 
-        playerColors[sender] = newColor
         val displayName = sender.displayName
-        if (oldColor == newColor)
+        if (playerColors[sender] == oldColor)
             sender.sendMessage("Your name is still $displayName")
         else
             sender.sendMessage("Your name is now $displayName")
@@ -62,7 +60,7 @@ class ChangeColorExecutor(private val plugin: ColoredPlayerNames) : TabExecutor 
         val forceFiltered = if (sender.hasPermission("coloredplayernames.changecolor.force"))
             permColors
         else
-            permColors.intersect(plugin.pickColor.availableColors())
+            permColors.intersect(plugin.playerColors.availableColors(sender))
 
         val colorNames = forceFiltered.mapNotNull { config.colorNames[it] }
         val completion = Completion(colorNames)
@@ -77,6 +75,9 @@ class ChangeColorExecutor(private val plugin: ColoredPlayerNames) : TabExecutor 
 
     private fun isPermittedChange(player: Player, color: ChatColor, canSpecify: Boolean, label: String): Boolean {
         val config = plugin.cpnConfig
+        val playerColors = plugin.playerColors
+        if (playerColors[player] == color)
+            return true
         val colorName = config.colorNames[color]
         val officialName = color.officialName
         if (!player.hasPermission("coloredplayernames.changecolor.specify.$officialName")) {
@@ -94,9 +95,9 @@ class ChangeColorExecutor(private val plugin: ColoredPlayerNames) : TabExecutor 
 
         if (player.hasPermission("coloredplayernames.changecolor.force"))
             return true
-        if (plugin.pickColor.availableColors().contains(color))
+        if (playerColors.availableColors(player).contains(color))
             return true
-        val count = plugin.playerColors.count(color)
+        val count = playerColors.count(color)
         assert(count > 0)
         val message = if (count == 1)
             "$colorName is unavailable because it is currently in use by another player"

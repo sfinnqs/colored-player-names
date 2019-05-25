@@ -12,44 +12,38 @@ import org.bukkit.event.player.PlayerQuitEvent
 class CpnListener(private val plugin: ColoredPlayerNames) : Listener {
 
     @EventHandler
-    fun onPlayerLogin(event: PlayerLoginEvent?) {
-        if (event == null) return
+    fun onPlayerLogin(event: PlayerLoginEvent) {
         plugin.cpnConfig.updateWithPlayer(event.player)
     }
 
     @EventHandler
-    fun onPlayerJoin(event: PlayerJoinEvent?) {
-        if (event == null) return
-
+    fun onPlayerJoin(event: PlayerJoinEvent) {
         val player = event.player
-        plugin.playerColors[player] = plugin.cpnConfig.getStaticColor(player)
-                ?: plugin.pickColor()
+        plugin.playerColors.changeColor(player)
 
-        event.joinMessage = "${player.displayName}$RESET$YELLOW joined the game."
+        event.joinMessage = event.joinMessage.replace(player.name, player.displayName)
     }
 
     @EventHandler
-    fun onAsyncPlayerChat(event: AsyncPlayerChatEvent?) {
-        if (event == null) return
-
-        event.format = "$GRAY<$RESET%s$RESET$GRAY>$RESET %s"
-        for ((name, displayName) in plugin.playerColors.replacements)
+    fun onAsyncPlayerChat(event: AsyncPlayerChatEvent) {
+        event.format = "$GRAY<$RESET%s$GRAY>$RESET %s"
+        for ((name, displayName) in plugin.playerColors.replacements) {
             event.message = event.message.replace(name, displayName)
+        }
     }
 
     @EventHandler
-    fun onPlayerDeath(event: PlayerDeathEvent?) {
-        if (event == null) return
+    fun onPlayerDeath(event: PlayerDeathEvent) {
         val player = event.entity
+        println(event.deathMessage)
         event.deathMessage = event.deathMessage?.replace(player.name, player.displayName)
     }
 
     @EventHandler
-    fun onPlayerQuit(event: PlayerQuitEvent?) {
-        if (event == null) return
-
+    fun onPlayerQuit(event: PlayerQuitEvent) {
         val player = event.player
-        event.quitMessage = "${player.displayName} ${YELLOW}left the game."
+        println(event.quitMessage)
+        event.quitMessage = event.quitMessage.replace(player.name, player.displayName + YELLOW)
         plugin.playerColors[player] = null
     }
 

@@ -15,8 +15,6 @@ import java.util.logging.Logger
  */
 class ColoredPlayerNames : JavaPlugin() {
 
-    /** An object used for randomly picking colors for players. */
-    internal val pickColor = ColorPicker(this)
     /** The configuration, reset every time the configuration is reloaded. */
     private var privateConfig: CpnConfig? = null
     /** An internally accessible configuration, drawing from [privateConfig] */
@@ -64,14 +62,15 @@ class ColoredPlayerNames : JavaPlugin() {
         newConfig.writeToFile()
         val scoreboardManager = server.scoreboardManager
         val newColors = if (scoreboardManager != null && newConfig.scoreboard) {
-            PlayerColors(scoreboardManager.newScoreboard)
+            PlayerColors(newConfig, scoreboardManager.mainScoreboard)
         } else {
-            PlayerColors()
+            PlayerColors(newConfig)
         }
         privateColors = newColors
 
         for (player in server.onlinePlayers)
-            playerColors[player] = pickColor()
+            if (player.hasPermission("coloredplayernames.color"))
+                playerColors.changeColor(player)
 
         return newConfig to newColors
     }
