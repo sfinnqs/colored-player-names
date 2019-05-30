@@ -10,18 +10,12 @@ data class PlayerSection(val name: String, val uuid: UUID, val color: ChatColor)
 
     constructor(section: ConfigurationSection, colors: Colors) : this(getName(section), getUuid(section), getColor(section, colors))
 
-    constructor(name: String, color: ChatColor) : this(name, getUuidOrFail(name), color)
+    constructor(name: String, color: ChatColor) : this(name, getUuid(name), color)
 
     companion object {
 
-        fun getUuid(name: String): UUID? {
-            @Suppress("DEPRECATION")
-            val uuid = Bukkit.getServer().getOfflinePlayer(name).uniqueId
-            val offlineBytes = "OfflinePlayer:$name".toByteArray(Charsets.UTF_8)
-            val offlineUuid = UUID.nameUUIDFromBytes(offlineBytes)
-            if (uuid == offlineUuid) return null
-            return uuid
-        }
+        @Suppress("DEPRECATION")
+        fun getUuid(name: String) = Bukkit.getServer().getOfflinePlayer(name).uniqueId
 
         private fun getName(section: ConfigurationSection): String {
             val uuidString = section.getString("uuid")
@@ -36,14 +30,10 @@ data class PlayerSection(val name: String, val uuid: UUID, val color: ChatColor)
         private fun getUuid(section: ConfigurationSection): UUID {
             val uuidString = section.getString("uuid")
             return if (uuidString == null) {
-                getUuidOrFail(section.name)
+                getUuid(section.name)
             } else {
                 UUID.fromString(uuidString)
             }
-        }
-
-        private fun getUuidOrFail(name: String): UUID {
-            return getUuid(name) ?: throw InvalidConfigurationException("Unrecognized name: $name")
         }
 
         private fun getColor(section: ConfigurationSection, colors: Colors): ChatColor {
