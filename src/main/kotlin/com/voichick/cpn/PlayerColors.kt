@@ -2,6 +2,7 @@ package com.voichick.cpn
 
 import org.bukkit.ChatColor
 import org.bukkit.ChatColor.RESET
+import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import org.bukkit.scoreboard.Scoreboard
 import java.util.*
@@ -13,6 +14,7 @@ class PlayerColors(private val config: CpnConfig, private val board: Scoreboard?
     private val playerColors = mutableMapOf<Player, ChatColor>()
     private val counts = EnumMap<ChatColor, Int>(ChatColor::class.java)
     private val lastColors = mutableMapOf<Player, ChatColor>()
+    private val teamNames = mutableMapOf<String, UUID>()
 
     private val replacementsRef = AtomicReference<Map<String, String>>(emptyMap())
     val replacements: Map<String, String>
@@ -38,7 +40,7 @@ class PlayerColors(private val config: CpnConfig, private val board: Scoreboard?
         player.setPlayerListName(displayName)
 
         // Update replacements
-        val newReplacements = playerColors.keys.associate { it.name to  getDisplayName(it) }
+        val newReplacements = playerColors.keys.associate { it.name to getDisplayName(it) }
         replacementsRef.set(newReplacements)
 
         // Update lastColors
@@ -50,7 +52,7 @@ class PlayerColors(private val config: CpnConfig, private val board: Scoreboard?
         if (board == null) return
         // Set player's scoreboard to board
         val playerBoard = player.scoreboard
-        val teamName = TEAM_PREFIX + name
+        val teamName = getTeamName(player)
         if (playerBoard != board) {
             val team = playerBoard.getEntryTeam(name)
             if (team == null || team.name == teamName) {
@@ -138,8 +140,38 @@ class PlayerColors(private val config: CpnConfig, private val board: Scoreboard?
         return result
     }
 
+    private fun getTeamName(player: OfflinePlayer): String {
+        val preferred = TEAM_PREFIX + player.name
+        if (preferred.length <= MAX_TEAM_NAME_LENGTH)
+            return preferred
+        val clipped = preferred.substring(0, MAX_TEAM_NAME_LENGTH)
+        val result = getAvailableName(player.uniqueId, clipped)
+        teamNames[result] = player.uniqueId
+        return result
+    }
+
+    private tailrec fun getAvailableName(uuid: UUID, possible: String): String {
+        val uuidForName = teamNames[possible]
+        return if (uuidForName == null || uuidForName == uuid)
+            possible
+        else
+            getAvailableName(uuid, nextName(possible))
+    }
+
     private companion object {
+        private fun nextName(name: String): String {
+            val firstPart = name.substring(0, name.lastIndex)
+            return when (val lastChar = name.last()) {
+                in '0'..'8' -> firstPart + (lastChar + 1)
+                '9' -> {
+                    nextName(firstPart) + '0'
+                }
+                else -> firstPart + '0'
+            }
+        }
+
         private const val TEAM_PREFIX = "__CPN__"
+        private const val MAX_TEAM_NAME_LENGTH = 16
     }
 
 }
