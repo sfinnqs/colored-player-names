@@ -16,24 +16,23 @@
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, see <https://www.gnu.org/licenses>.
  */
-package com.voichick.cpn
+package org.sfinnqs.cpn
 
-import org.bukkit.ChatColor
-import org.bukkit.ChatColor.MAGIC
-import java.util.*
+class Completion private constructor(val strings: List<String>, val subcompletions: Map<String, Completion>) {
 
-fun condenseString(string: String): String {
-    return string.toLowerCase(Locale.ROOT).replace(Regex("[^a-z]+"), "")
-}
+    constructor(strings: List<String>) : this(strings, getSubcompletions(strings))
 
-fun String.equalsCondensed(other: String) = condenseString(this) == condenseString(other)
-
-val ChatColor.officialName
-    get() = when (this) {
-        MAGIC -> "obfuscated"
-        else -> name.toLowerCase(Locale.ROOT)
+    override fun equals(other: Any?): Boolean {
+        return this === other || strings == (other as? Completion)?.strings
     }
 
-fun getColorByOfficialName(officialName: String) = ChatColor.values().firstOrNull {
-    it.officialName.equalsCondensed(officialName)
+    override fun hashCode(): Int {
+        return strings.hashCode()
+    }
+
+    private companion object {
+        fun getSubcompletions(strings: List<String>) = strings.map { string ->
+            string.split(' ', limit = 2)
+        }.filter { it.size >= 2 }.groupBy({ it[0] }, { it[1] }).mapValues { Completion(it.value) }
+    }
 }
