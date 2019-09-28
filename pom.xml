@@ -36,8 +36,16 @@
         <configuration>
           <relocations>
             <relocation>
-              <pattern>org.bstats</pattern>
+              <pattern>org.bstats.bukkit</pattern>
               <shadedPattern>org.sfinnqs.cpn.bstats</shadedPattern>
+            </relocation>
+            <relocation>
+              <pattern>kotlin</pattern>
+              <shadedPattern>org.sfinnqs.cpn.kotlin</shadedPattern>
+            </relocation>
+            <relocation>
+              <pattern>net.gravitydevelopment.updater</pattern>
+              <shadedPattern>org.sfinnqs.cpn.updater</shadedPattern>
             </relocation>
           </relocations>
         </configuration>
@@ -74,6 +82,44 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>com.github.wvengen</groupId>
+        <artifactId>proguard-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>proguard</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <obfuscate>false</obfuscate>
+          <injar>${project.build.finalName}.jar</injar>
+          <outjar>${project.artifactId}.jar</outjar>
+          <outputDirectory>${project.build.directory}</outputDirectory>
+          <libs>
+            <lib>${java.home}/lib/rt.jar</lib>
+            <lib>lib/spigot-1.14.4.jar</lib>
+          </libs>
+          <outFilter>!**.kotlin_metadata</outFilter>
+          <options>
+            <option>-optimizationpasses 10</option>
+            <option>-keep class ** extends org.bukkit.plugin.java.JavaPlugin</option>
+            <option>
+              -keep class ** implements org.bukkit.event.Listener {
+              @org.bukkit.event.EventHandler *;
+              }
+            </option>
+            <option>
+              -assumenosideeffects class kotlin.jvm.internal.Intrinsics {
+              static void checkParameterIsNotNull(java.lang.Object, java.lang.String);
+              static void checkExpressionValueIsNotNull(java.lang.Object, java.lang.String);
+              }
+            </option>
+          </options>
+        </configuration>
+      </plugin>
     </plugins>
     <resources>
       <resource>
@@ -82,7 +128,6 @@
       </resource>
     </resources>
     <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
-    <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
   </build>
 
   <repositories>

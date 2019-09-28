@@ -58,11 +58,6 @@ class CpnExecutor(private val plugin: ColoredPlayerNames) : TabExecutor {
             return true
         }
         val uuid = PlayerSection.getUuid(playerArg)
-        if (uuid == null) {
-            val error = "${RED}Unrecognized player name: $playerArg"
-            sender.sendMessage(arrayOf(error, usage))
-            return true
-        }
         val config = plugin.cpnConfig
         if (set) {
             if (args.size < 3) {

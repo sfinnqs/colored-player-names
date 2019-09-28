@@ -2,7 +2,8 @@ name: ColoredPlayerNames
 version: ${project.version}
 description: A very simple plugin that colors players' names randomly on join
 load: POSTWORLD
-main: com.voichick.cpn.ColoredPlayerNames
+main: org.sfinnqs.cpn.ColoredPlayerNames
+api-version: "1.14"
 commands:
   coloredplayernames:
     description: Administrate ColoredPlayerNames
