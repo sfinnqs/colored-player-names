@@ -4,4 +4,4 @@ ColoredPlayerNames is a [Bukkit](//bukkit.org/) plugin for coloring the names of
 
 Check out the [BukkitDev](//dev.bukkit.org/projects/ColoredPlayerNames) page for more information!
 
-![ColoredPlayerNames stats](//bstats.org/signatures/bukkit/ColoredPlayerNames.svg)
+![ColoredPlayerNames stats](https://bstats.org/signatures/bukkit/ColoredPlayerNames.svg)
