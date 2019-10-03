@@ -111,6 +111,7 @@
               @org.bukkit.event.EventHandler *;
               }
             </option>
+            <option>-keep class org.sfinnqs.cpn.bstats.Metrics { *; }</option>
             <option>
               -assumenosideeffects class kotlin.jvm.internal.Intrinsics {
               static void checkParameterIsNotNull(java.lang.Object, java.lang.String);
